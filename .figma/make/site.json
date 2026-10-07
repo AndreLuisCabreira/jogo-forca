@@ -1,0 +1,10 @@
+{
+  "description": "Interactive Brazilian Portuguese Hangman game with difficulty levels, virtual keyboard, score tracking, and offline play for engaging language practice.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

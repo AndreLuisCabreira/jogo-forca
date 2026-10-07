@@ -1,0 +1,152 @@
+<!--
+  Projeto: Última Letra.
+  Esta página reúne a estrutura semântica e acessível do jogo, carrega style.css para a
+  apresentação e script.js para dados, regras, persistência, renderização e eventos.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <!-- Metadados tornam a página legível em português, responsiva e identificável no navegador. -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0A0A0A" />
+    <meta name="description" content="Última Letra: seis chances, uma palavra e um jogo de nervos e vocabulário." />
+    <title>Última Letra</title>
+    <!-- A folha externa concentra todo o tema, os estados visuais e a responsividade. -->
+    <link rel="stylesheet" href="./style.css" />
+    <!-- defer preserva a ordem do documento e só inicia o jogo depois que o DOM foi analisado. -->
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <!-- Cabeçalho de identidade: apresenta a marca sem participar do estado da partida. -->
+      <header class="site-header">
+        <!-- O aria-label dá ao link da marca um destino compreensível para leitores de tela. -->
+        <a class="brand" href="./index.html" aria-label="Última Letra, início">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>última letra<span class="brand-dot">.</span></span>
+        </a>
+        <span class="header-note">NERVOS / VOCABULÁRIO</span>
+      </header>
+
+      <!-- Conteúdo principal: introdução, controles, área jogável e resultado final. -->
+      <main>
+        <!-- Abertura editorial que contextualiza o desafio antes dos controles interativos. -->
+        <div class="intro">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-line"></span> UM JOGO DE NERVOS E VOCABULÁRIO</p>
+            <h1>Última <em>Letra.</em></h1>
+            <p class="intro-copy">Seis chances. Uma palavra. Cada letra pode ser a última.</p>
+          </div>
+          <!-- Elemento apenas decorativo; aria-hidden evita ruído semântico para tecnologias assistivas. -->
+          <div class="intro-badge" aria-hidden="true"><span>01</span><small>/ 06</small></div>
+        </div>
+
+        <!-- Card principal do jogo; o aria-label nomeia a região para navegação assistiva. -->
+        <section class="game-card" aria-label="Última Letra">
+          <!-- Barra superior que agrupa dificuldade e placar sem misturá-los à rodada. -->
+          <div class="toolbar">
+            <!-- Seletor ligado a #difficulty no script: persiste o nível e pode iniciar nova rodada. -->
+            <div class="level-control">
+              <label for="difficulty">DIFICULDADE</label>
+              <div class="select-wrap">
+                <!-- O id permite leitura e atualização pelo script; aria-label explicita a ação do campo. -->
+                <select id="difficulty" aria-label="Selecionar dificuldade">
+                  <option value="facil">Fácil · 4–5 letras</option>
+                  <option value="medio">Médio · 6–8 letras</option>
+                  <option value="dificil">Difícil · 9+ letras</option>
+                </select>
+              </div>
+            </div>
+            <!-- Placar por nível; #wins e #losses recebem os totais persistidos pelo script. -->
+            <div class="score-area" aria-label="Placar da dificuldade selecionada">
+              <div class="score-item"><span class="score-label">VITÓRIAS</span><strong id="wins">00</strong></div>
+              <span class="score-divider" aria-hidden="true"></span>
+              <div class="score-item"><span class="score-label">DERROTAS</span><strong id="losses">00</strong></div>
+              <!-- #reset-score aciona a confirmação; aria-label e title reforçam a consequência do botão. -->
+              <button class="reset-button" id="reset-score" type="button" aria-label="Zerar placar" title="Zerar placar">Zerar placar</button>
+            </div>
+          </div>
+
+          <!-- Mantém o layout em duas áreas: ilustração à esquerda e interação à direita. -->
+          <div class="game-content">
+            <!-- Painel da forca: o script revela sequencialmente os seis elementos .body-part. -->
+            <div class="drawing-panel">
+              <!-- O asterisco é decorativo e fica oculto de leitores de tela para não interromper a leitura. -->
+              <div class="drawing-topline"><span>ILUSTRAÇÃO <span class="drawing-index">/ 01</span></span><span class="tiny-cross" aria-hidden="true">✳</span></div>
+              <!-- role="img" e aria-labelledby unem título e descrição dinâmica em uma imagem acessível. -->
+              <svg class="gallows" viewBox="0 0 320 310" role="img" aria-labelledby="drawing-title drawing-description">
+                <title id="drawing-title">Desenho da forca</title>
+                <!-- #drawing-description é atualizado pelo script para anunciar o progresso do desenho. -->
+                <desc id="drawing-description">Nenhuma parte do boneco desenhada.</desc>
+                <!-- Estrutura permanente da forca; não representa erro nem muda durante a partida. -->
+                <path class="gallows-structure" d="M53 282H238 M94 282V27H198V65" />
+                <path class="gallows-detail" d="M94 69L135 27" />
+                <!-- IDs part-* seguem a ordem dos seis erros usada por bodyParts em script.js. -->
+                <circle class="body-part" id="part-head" cx="198" cy="91" r="26" pathLength="100" />
+                <path class="body-part" id="part-torso" d="M198 117V192" pathLength="100" />
+                <path class="body-part" id="part-left-arm" d="M198 139L162 173" pathLength="100" />
+                <path class="body-part" id="part-right-arm" d="M198 139L234 173" pathLength="100" />
+                <path class="body-part" id="part-left-leg" d="M198 192L163 240" pathLength="100" />
+                <path class="body-part" id="part-right-leg" d="M198 192L233 240" pathLength="100" />
+              </svg>
+              <!-- Rodapé temático; os pontos decorativos são ignorados por tecnologia assistiva. -->
+              <div class="drawing-footer"><span>NÃO DEIXE A CORDA APERTAR.</span><span class="footer-dots" aria-hidden="true">•••</span></div>
+            </div>
+
+            <!-- Área interativa conectada aos métodos de renderização e entrada em script.js. -->
+            <div class="play-panel">
+              <!-- Cabeçalho da rodada com pergunta fixa e contador dinâmico de chances. -->
+              <div class="round-heading">
+                <div><span class="section-kicker">A PALAVRA SECRETA</span><h2>Que palavra é essa?</h2></div>
+                <!-- #remaining e #remaining-pill exibem chances e estado de perigo; o ponto é decorativo. -->
+                <div class="remaining-pill" id="remaining-pill"><span class="pill-dot" aria-hidden="true"></span><span id="remaining">6 chances</span></div>
+              </div>
+
+              <!-- Palavra oculta: #word recebe um slot por letra criado por renderWord(). -->
+              <div class="word-area">
+                <!-- O aria-label de #word é refeito a cada jogada para anunciar letras reveladas com contexto. -->
+                <div class="word-slots" id="word" aria-label="A partida ainda não começou"><span class="word-placeholder">_ _ _ _ _</span></div>
+                <!-- #feedback usa status/live polite para anunciar a jogada completa sem interromper o usuário. -->
+                <p class="feedback" id="feedback" role="status" aria-live="polite" aria-atomic="true">Escolha um nível e comece a jogar.</p>
+              </div>
+
+              <!-- Histórico de tentativas; #attempted diferencia acertos e erros por texto, símbolo e cor. -->
+              <div class="attempts-row">
+                <div class="attempts-label"><span>SUAS TENTATIVAS</span><strong id="error-count">Erros: 0/6</strong></div>
+                <!-- aria-label nomeia a lista dinâmica para que seus chips tenham contexto acessível. -->
+                <div class="attempted-letters" id="attempted" aria-label="Letras já tentadas"><span class="empty-attempts">Nenhuma letra ainda</span></div>
+              </div>
+
+              <!-- Teclado virtual: #keyboard recebe A–Z e oferece a mesma entrada do teclado físico. -->
+              <div class="keyboard-section">
+                <div class="keyboard-heading"><span>ESCOLHA UMA LETRA</span><span>OU USE SEU TECLADO ↗</span></div>
+                <!-- role="group" e aria-label agrupam as 26 teclas como um único controle reconhecível. -->
+                <div class="keyboard" id="keyboard" role="group" aria-label="Teclado de letras"></div>
+              </div>
+
+              <!-- Ações da rodada: #new-game encerra uma rodada ativa e inicia outra sem recarregar. -->
+              <div class="game-actions">
+                <!-- type="button" evita envio acidental; a seta decorativa não é anunciada. -->
+                <button class="new-game-button" id="new-game" type="button">Nova partida <span aria-hidden="true">↗</span></button>
+                <span class="action-hint">Uma letra por vez. Escolha com cuidado.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Resultado final: #result é revelado por showResult(); live/atomic anuncia todo o desfecho junto. -->
+        <section class="result-card" id="result" aria-live="polite" aria-atomic="true" hidden>
+          <!-- #result-icon é visual e redundante com o título, por isso permanece fora da árvore acessível. -->
+          <div class="result-icon" id="result-icon" aria-hidden="true"></div>
+          <!-- IDs result-* recebem estado, título e palavra secreta ao concluir a partida. -->
+          <div class="result-copy"><span class="section-kicker" id="result-kicker"></span><h2 id="result-title"></h2><p id="result-detail"></p></div>
+          <!-- #result-restart reutiliza startRound(); a seta é apenas reforço visual. -->
+          <button class="result-button" id="result-restart" type="button">Nova partida <span aria-hidden="true">↗</span></button>
+        </section>
+      </main>
+
+      <footer class="site-footer"><span>ÚLTIMA LETRA. — PARA QUEM NÃO FOGE DO DESAFIO.</span><span>SEIS CHANCES / UMA SAÍDA</span></footer>
+    </div>
+  </body>
+</html>
